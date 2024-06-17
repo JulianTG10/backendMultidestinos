@@ -1,12 +1,14 @@
+
 const mysql = require('mysql2/promise');
 
 async function connect() {
   try {
     const connection = await mysql.createConnection({
-        host: 'localhost', 
+        host: 'monorail.proxy.rlwy.net', 
       user: 'root', 
-      password: "", 
-      database: 'multidestinos_express', 
+      password: "mioylrtkppAcaTeSwBFvpCxVByzDawtj", 
+      database: 'railway', 
+      port: '30968'
     });
     return connection;
   } catch (error) {

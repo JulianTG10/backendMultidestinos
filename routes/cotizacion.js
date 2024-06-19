@@ -24,8 +24,23 @@ async function getCotizaciones(req, res) {
 async function createCotizacion(req, res) {
     const conn = await connect();
     try {
-        const result = await conn.query('INSERT INTO cotizacion SET ?', req.body);
-        res.status(201).json({ success: "Cotización creada correctamente", id: result.insertId });
+        // Obtener el siguiente valor de la secuencia
+        const [result] = await conn.query('SELECT NEXTVAL(cotizacion_seq)');
+        const nextId = result[0]['nextval'];
+
+        // Construir el idCotizacion
+        const idCotizacion = `COT-${nextId}`;
+
+        // Agregar el idCotizacion a los datos de la cotización
+        req.body.idCotizacion = idCotizacion;
+
+        // Insertar la cotización
+        await conn.query('INSERT INTO cotizacion SET ?', req.body);
+
+        res.status(201).json({
+            success: "Cotización creada correctamente",
+            idCotizacion: idCotizacion // Devolver el idCotizacion generado
+        });
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: "Error al crear la cotización" });

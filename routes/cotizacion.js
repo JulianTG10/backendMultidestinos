@@ -24,30 +24,40 @@ async function getCotizaciones(req, res) {
 async function createCotizacion(req, res) {
     const conn = await connect();
     try {
-        // Obtener el siguiente valor de la secuencia
-        const [result] = await conn.query('SELECT NEXTVAL(cotizacion_seq)');
-        const nextId = result[0]['nextval'];
-
-        // Construir el idCotizacion
-        const idCotizacion = `COT-${nextId}`;
-
-        // Agregar el idCotizacion a los datos de la cotización
-        req.body.idCotizacion = idCotizacion;
-
-        // Insertar la cotización
-        await conn.query('INSERT INTO cotizacion SET ?', req.body);
-
-        res.status(201).json({
-            success: "Cotización creada correctamente",
-            idCotizacion: idCotizacion // Devolver el idCotizacion generado
-        });
+      // Iniciar una transacción
+      await conn.beginTransaction();
+  
+      // Obtener y actualizar el último valor de la secuencia
+      const [result] = await conn.query(
+        'UPDATE secuencia_cotizacion SET ultimo_valor = LAST_INSERT_ID(ultimo_valor + 1)'
+      );
+      const nextId = result.insertId;
+  
+      // Construir el idCotizacion
+      const idCotizacion = `COT-${nextId}`;
+  
+      // Agregar el idCotizacion a los datos de la cotización
+      req.body.idCotizacion = idCotizacion;
+  
+      // Insertar la cotización
+      await conn.query('INSERT INTO cotizacion SET ?', req.body);
+  
+      // Confirmar la transacción
+      await conn.commit();
+  
+      res.status(201).json({
+        success: "Cotización creada correctamente",
+        idCotizacion: idCotizacion
+      });
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ error: "Error al crear la cotización" });
+      // Revertir la transacción en caso de error
+      await conn.rollback();
+      console.error(error);
+      res.status(500).json({ error: "Error al crear la cotización" });
     } finally {
-        if (conn) conn.end();
+      if (conn) conn.end();
     }
-}
+  }
 
 async function updateCotizacion(req, res) {
     const cotizacionId = parseInt(req.params.id, 10);

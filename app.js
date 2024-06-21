@@ -1,5 +1,5 @@
 const user = require ("./routes/user.js")
-const enviarCorreoRouter = require('./routes/enviarCorreo.js');
+
 const habitacionCotizacion = require ("./routes/habitacionCotizacion.js")
 const planes = require ("./routes/planes.js")
 const tiquete = require ("./routes/tiquete.js")
@@ -24,7 +24,7 @@ cotizacion(app)
 transporte(app)
 habitacionCotizacion(app)
 tiquete(app)
-app.use('/api', enviarCorreoRouter);
+
 
 
 app.post('/', async (req, res) => {

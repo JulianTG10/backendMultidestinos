@@ -1,5 +1,5 @@
 const user = require ("./routes/user.js")
-
+const cañoCristal = require("./routes/CañoCristal.js")
 const habitacionCotizacion = require ("./routes/habitacionCotizacion.js")
 const planes = require ("./routes/planes.js")
 const tiquete = require ("./routes/tiquete.js")
@@ -24,6 +24,7 @@ cotizacion(app)
 transporte(app)
 habitacionCotizacion(app)
 tiquete(app)
+cañoCristal(app)
 
 
 

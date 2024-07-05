@@ -8,7 +8,7 @@ router.post("/", createImpuesto);
 router.put("/:id", updateImpuesto);
 router.delete("/:id", deleteImpuesto);
 
-module.exports = (app) => app.use("/impuestosCañoCristal", router);
+module.exports = (app) => app.use("/canoCristal", router);
 
 // Funciones de manejo de rutas
 

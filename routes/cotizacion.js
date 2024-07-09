@@ -4,6 +4,7 @@ const router = express.Router();
 
 router.get("/", getCotizaciones);
 router.post("/", createCotizacion);
+router.post("/c", createCotizacionC);
 router.put("/:id", updateCotizacion);
 router.delete("/:id", deleteCotizacion);
 router.get("/:idCotizacion", getCotizacionesPorIdCotizacion);
@@ -20,7 +21,40 @@ async function getCotizaciones(req, res) {
         if (conn) conn.end();
     }
 }
+async function createCotizacionC(req, res) {
+    const conn = await connect();
+    try {
+        await conn.beginTransaction();
 
+        // Obtener y actualizar la secuencia para "COT-C"
+        const [resultCotC] = await conn.query(
+            'UPDATE secuencia_cotizacion_c SET ultimo_valor = LAST_INSERT_ID(ultimo_valor + 1)'
+        );
+        const nextIdCotC = resultCotC.insertId;
+        const idCotizacionCotC = `COT-C${nextIdCotC}`;
+
+        // Agregar el idCotizacionCotC a los datos de la cotización
+        req.body.idCotizacion = idCotizacionCotC; // Nota: aquí usamos idCotizacion, no idCotizacionCotC
+
+        // Insertar la cotización
+        await conn.query('INSERT INTO cotizacion SET ?', req.body);
+
+        // Confirmar la transacción
+        await conn.commit();
+
+        res.status(201).json({
+            success: "Cotización creada correctamente",
+            idCotizacion: idCotizacionCotC 
+        });
+    } catch (error) {
+        // Revertir la transacción en caso de error
+        await conn.rollback();
+        console.error(error);
+        res.status(500).json({ error: "Error al crear la cotización" });
+    } finally {
+        if (conn) conn.end();
+    }
+}
 async function createCotizacion(req, res) {
     const conn = await connect();
     try {

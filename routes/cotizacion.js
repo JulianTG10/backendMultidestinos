@@ -31,10 +31,10 @@ async function createCotizacionC(req, res) {
             'UPDATE secuencia_cotizacion_c SET ultimo_valor = LAST_INSERT_ID(ultimo_valor + 1)'
         );
         const nextIdCotC = resultCotC.insertId;
-        const idCotizacionCotC = `COT-C${nextIdCotC}`;
+        const idCotizacion = `COT-C${nextIdCotC}`;
 
         // Agregar el idCotizacionCotC a los datos de la cotización
-        req.body.idCotizacion = idCotizacionCotC; // Nota: aquí usamos idCotizacion, no idCotizacionCotC
+        req.body.idCotizacion = idCotizacion; // Nota: aquí usamos idCotizacion, no idCotizacionCotC
 
         // Insertar la cotización
         await conn.query('INSERT INTO cotizacion SET ?', req.body);
@@ -44,7 +44,7 @@ async function createCotizacionC(req, res) {
 
         res.status(201).json({
             success: "Cotización creada correctamente",
-            idCotizacion: idCotizacionCotC 
+            idCotizacion: idCotizacion 
         });
     } catch (error) {
         // Revertir la transacción en caso de error

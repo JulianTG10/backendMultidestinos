@@ -23,6 +23,7 @@ async function getCostosHotel(req, res) {
         if (conn) conn.end();
     }
 }
+//prueba
 
 async function createCostoHotel(req, res) {
     const conn = await connect();

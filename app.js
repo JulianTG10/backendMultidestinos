@@ -7,6 +7,7 @@ const clientes = require ("./routes/clientes.js")
 const hotel = require ("./routes/hotel.js")
 const cotizacion = require ("./routes/cotizacion.js")
 const transporte = require ("./routes/transporte.js")
+const costosHotel = require ("./routes/costosHotel.js")
 const cors = require ("cors")
 const express =require('express');
 const app = express();
@@ -25,7 +26,7 @@ transporte(app)
 habitacionCotizacion(app)
 tiquete(app)
 cañoCristal(app)
-
+costosHotel(app)
 
 
 app.post('/', async (req, res) => {
